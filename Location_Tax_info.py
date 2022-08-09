@@ -37,7 +37,7 @@ class Location_Tax_info:
             tax_rate = .35
         elif income >= 539901:
             tax_rate = .37
-        net_income = income - (income * tax_rate)
-        return net_income
+        tax_owed = (income * tax_rate)
+        return tax_owed
 
     
