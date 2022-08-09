@@ -1,5 +1,3 @@
-# import csv
-# path = r'/home/jmcolvin/Desktop/MilTransCalc/cost_living_index.csv'
 from Location_Tax_info import Location_Tax_info
 
 class Current_location(Location_Tax_info):

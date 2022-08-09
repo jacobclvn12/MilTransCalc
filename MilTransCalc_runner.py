@@ -22,6 +22,6 @@ def tax_adjustment():
     needed_salary = round(cli_adjustment + (potential_income_tax - current_income_tax),2)
     return needed_salary
     
-
+print(tax_adjustment())
 
 
