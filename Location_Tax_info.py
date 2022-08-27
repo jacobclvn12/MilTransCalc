@@ -1,6 +1,6 @@
 import csv
-cli_csv = r'cost_living_index.csv'
-st_income_tax_csv = r'st_inc_tx.csv'
+cli_csv = r'data\cost_living_index.csv'
+st_income_tax_csv = r'data\st_inc_tx.csv'
 class Location_Tax_info:
     
     def get_CLI(self):
