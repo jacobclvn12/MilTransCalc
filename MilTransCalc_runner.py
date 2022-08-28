@@ -2,8 +2,8 @@ from Location_Tax_info import Location_Tax_info
 from current_location import Current_location
 from member_info import Member_information
 from new_location import New_Location
-# my yearly income in jess' thing 71034
-user = Member_information('E-7', 99901, 7, 'FL')
+
+user = Member_information('E-5', 21108, 7, 'FL')
 current_loc = Current_location('Baltimore','MD')
 new_loc = New_Location('Phoenix', 'AZ')
 
@@ -18,11 +18,10 @@ def cost_of_living_adjustment():
 def tax_adjustment():
     cli_adjustment = float(cost_of_living_adjustment())
     current_income_tax = user.fed_tax + (user.total_income * (user.state_tx / 100))
-    potential_income_tax = Location_Tax_info.get_fed_tax(None, cli_adjustment) + (cli_adjustment * (new_loc.state_tax / 100))
+    potential_income_tax = Location_Tax_info.get_fed_tax(cli_adjustment) + (cli_adjustment * (new_loc.state_tax / 100))
     needed_salary = round(cli_adjustment + (potential_income_tax - current_income_tax),2)
     return needed_salary
-
-
+    
 def MilTransCalc():
     cost_of_living_adjustment()
     tax_adjustment()
