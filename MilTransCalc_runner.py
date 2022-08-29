@@ -18,7 +18,7 @@ def cost_of_living_adjustment():
 def tax_adjustment():
     cli_adjustment = float(cost_of_living_adjustment())
     current_income_tax = user.fed_tax + (user.total_income * (user.state_tx / 100))
-    potential_income_tax = Location_Tax_info.get_fed_tax(cli_adjustment) + (cli_adjustment * (new_loc.state_tax / 100))
+    potential_income_tax = Location_Tax_info.get_fed_tax(None,cli_adjustment) + (cli_adjustment * (new_loc.state_tax / 100))
     needed_salary = round(cli_adjustment + (potential_income_tax - current_income_tax),2)
     return needed_salary
     

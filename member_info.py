@@ -9,7 +9,7 @@ bah_with = r'data/bah_rate_with.csv'
 
 class Member_information(Location_Tax_info):
     
-    def __init__(self, rank, duty_zip, years_service, HoR_St, total_income):
+    def __init__(self, rank, duty_zip, years_service, HoR_St):
         self.rank = rank
         self.mha = None
         self.duty_zip = duty_zip
