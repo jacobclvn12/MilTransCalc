@@ -1,13 +1,7 @@
 from Location_Tax_info import Location_Tax_info
-import csv
 import pymongo
 
-
-pay_chart_csv = r'data\Military_Pay.csv'
-mha_csv = r"data\mha.csv"
-bah_without = r'data/bah_rate_without.csv'
-bah_with = r'data/bah_rate_with.csv'
-#adding in MONGODB information use Practice 2 as reference for get zipcode, have not uploaded BAH docs yet
+#connect to MongoDB Database and pulls needed Collections
 myclient = pymongo.MongoClient("mongodb+srv://jacobclvn12:Ep2f47ype@miltranscalc.iwijrtc.mongodb.net")
 mydb = myclient["MilPayDataBase"]
 mha_col = mydb['MHA_Zipcode_lookup']
@@ -27,18 +21,16 @@ class Member_information(Location_Tax_info):
         self.years_service = self.generalize_YoS(years_service)
         self.state = HoR_St
         self.base_pay = self.get_yearly_base_pay()
-        #self.total_income = self.base_pay + self.get_bah() +  4638
         self.state_tx = int(self.get_St_income_tax())
         self.fed_tax = int(self.get_fed_tax(self.base_pay))
-        #self.net_income = self.total_income - ((self.base_pay * (self.state_tx / 100)) + self.fed_tax)
-    
+    #chages the dependant status of the user, which changes bah amount, then reruns functions affected by the change
     def change_dependant(self):
         self.has_dependant = True
         self.bah = self.get_bah()
         self.total_income = self.total_income_fn()
         self.net_income = self.net_income_fn()
 
-    
+    #Mil pay is based of years of service, based on every other, with execption to first few years, this changes the odds to the evens when needed
     def generalize_YoS(self,years_service):
         if years_service < 2:
             self.years_service = '<2'
@@ -77,7 +69,7 @@ class Member_information(Location_Tax_info):
             self.years_service = 20
             self.years_service = self.years_service
             return self.years_service
-
+    #pulls the years of service and rank to find the base pay for the user
     def get_yearly_base_pay(self):
         yos = self.generalize_YoS(self.years_service)
         mquery = {'Rank': self.rank}
@@ -86,7 +78,7 @@ class Member_information(Location_Tax_info):
            base_pay = x[str(yos)]
            self.base_pay = int(base_pay) * 12
         return self.base_pay
-    
+    #getting a users BAH Rates is dependant on their Duty station zipcode, this uses more general MHAs to compile all zipcodes
     def get_mha(self):
         mquery = {'zipcode': str(self.duty_zip)}
         mydoc = mha_col.find(mquery)
@@ -95,7 +87,7 @@ class Member_information(Location_Tax_info):
             self.mha = x['mha']
         return self.mha
 
-
+#finds bah if they have a dependant, sub func of get_bah()
     def bah_with_dep(self):
         mquery = {'mha': str(self.mha)}
         mydoc= bw_col.find(mquery)
@@ -104,7 +96,7 @@ class Member_information(Location_Tax_info):
             self.bah = int(bah) * 12
         return self.bah
 
-
+#finds bah if they don't have a dependant, sub func of get_bah()
     def bah_wo_dep(self):
         mquery = {'mha': str(self.mha)}
         mydoc= bwo_col.find(mquery)
@@ -112,18 +104,18 @@ class Member_information(Location_Tax_info):
             bah = x[self.rank]
             self.bah = int(bah) * 12
         return self.bah
-
+#checks the dependant status of the user, and runs the correct bah lookup
     def get_bah(self):
         if self.has_dependant:
             self.bah = self.bah_with_dep()
         else:
             self.bah = self.bah_wo_dep()
         return self.bah
-
+#adds base pay with bah and bas
     def total_income_fn(self):
         self.total_income = self.base_pay + self.bah + 4638
         return self.total_income
-    
+#takes into account taxes and removes them from total income
     def net_income_fn(self):
         total_income = self.total_income_fn()
 
